@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/InventoryManagement2025/obj
+/.vs/InventoryManagement2025/CopilotIndices/17.14.1231.31060
+/.vs
+/InventoryManagement2025/bin/Debug/net8.0
