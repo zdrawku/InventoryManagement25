@@ -64,6 +64,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapEquipmentEndpoints();
+// Commented out to avoid duplicate routes with EquipmentController
+// app.MapEquipmentEndpoints();
 
 app.Run();

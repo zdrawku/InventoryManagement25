@@ -11,11 +11,11 @@ namespace InventoryManagement2025.Models
         public int EquipmentId { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
-        public string SerialNumber { get; set; }
+        public string SerialNumber { get; set; } = string.Empty;
 
         // 1️⃣ Equipment condition enumeration
         public Condition Condition { get; set; }
@@ -24,9 +24,9 @@ namespace InventoryManagement2025.Models
         public EquipmentStatus Status { get; set; }
 
         // 3️⃣ Location as free text (e.g., "Room 204", "Library")
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
 
-        public string PhotoUrl { get; set; }
+        public string PhotoUrl { get; set; } = string.Empty;
 
         // Navigation property
        // public ICollection<Request> Requests { get; set; }
@@ -58,60 +58,61 @@ public static class EquipmentEndpoints
     {
         var group = routes.MapGroup("/api/Equipment").WithTags(nameof(Equipment));
 
-        group.MapGet("/", async (SchoolInventory db) =>
-        {
-            return await db.Equipments.ToListAsync();
-        })
-        .WithName("GetAllEquipment")
-        .WithOpenApi();
+            group.MapGet("/", async (SchoolInventory db) =>
+            {
+                return await db.Equipment.ToListAsync();
+            })
+    .WithName("GetAllEquipment")
+    .WithOpenApi();
 
-        group.MapGet("/{id}", async Task<Results<Ok<Equipment>, NotFound>> (int equipmentid, SchoolInventory db) =>
-        {
-            return await db.Equipments.AsNoTracking()
-                .FirstOrDefaultAsync(model => model.EquipmentId == equipmentid)
-                is Equipment model
-                    ? TypedResults.Ok(model)
-                    : TypedResults.NotFound();
-        })
-        .WithName("GetEquipmentById")
-        .WithOpenApi();
+            group.MapGet("/{id}", async Task<Results<Ok<Equipment>, NotFound>> (int equipmentid, SchoolInventory db) =>
+            {
+                return await db.Equipment.AsNoTracking()
+                    .FirstOrDefaultAsync(model => model.EquipmentId == equipmentid)
+                    is Equipment model
+                        ? TypedResults.Ok(model)
+                        : TypedResults.NotFound();
+            })
+            .WithName("GetEquipmentById")
+            .WithOpenApi();
 
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int equipmentid, Equipment equipment, SchoolInventory db) =>
-        {
-            var affected = await db.Equipments
-                .Where(model => model.EquipmentId == equipmentid)
-                .ExecuteUpdateAsync(setters => setters
-                  .SetProperty(m => m.EquipmentId, equipment.EquipmentId)
-                  .SetProperty(m => m.Name, equipment.Name)
-                  .SetProperty(m => m.Type, equipment.Type)
-                  .SetProperty(m => m.SerialNumber, equipment.SerialNumber)
-                  .SetProperty(m => m.Condition, equipment.Condition)
-                  .SetProperty(m => m.Status, equipment.Status)
-                  .SetProperty(m => m.Location, equipment.Location)
-                  .SetProperty(m => m.PhotoUrl, equipment.PhotoUrl)
-                  );
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
-        })
-        .WithName("UpdateEquipment")
-        .WithOpenApi();
+            group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int equipmentid, Equipment equipment, SchoolInventory db) =>
+            {
+                var affected = await db.Equipment
+                    .Where(model => model.EquipmentId == equipmentid)
+                    .ExecuteUpdateAsync(setters => setters
+                      .SetProperty(m => m.EquipmentId, equipment.EquipmentId)
+                      .SetProperty(m => m.Name, equipment.Name)
+                      .SetProperty(m => m.Type, equipment.Type)
+                      .SetProperty(m => m.SerialNumber, equipment.SerialNumber)
+                      .SetProperty(m => m.Condition, equipment.Condition)
+                      .SetProperty(m => m.Status, equipment.Status)
+                      .SetProperty(m => m.Location, equipment.Location)
+                      .SetProperty(m => m.PhotoUrl, equipment.PhotoUrl)
+                      );
+                return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
+            })
+            .WithName("UpdateEquipment")
+            .WithOpenApi();
 
-        group.MapPost("/", async (Equipment equipment, SchoolInventory db) =>
-        {
-            db.Equipments.Add(equipment);
-            await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/Equipment/{equipment.EquipmentId}",equipment);
-        })
-        .WithName("CreateEquipment")
-        .WithOpenApi();
+            group.MapPost("/", async (Equipment equipment, SchoolInventory db) =>
+            {
+                db.Equipment.Add(equipment);
+                await db.SaveChangesAsync();
+                return TypedResults.Created($"/api/Equipment/{equipment.EquipmentId}", equipment);
+            })
+            .WithName("CreateEquipment")
+            .WithOpenApi();
 
-        group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int equipmentid, SchoolInventory db) =>
-        {
-            var affected = await db.Equipments
-                .Where(model => model.EquipmentId == equipmentid)
-                .ExecuteDeleteAsync();
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
-        })
-        .WithName("DeleteEquipment")
-        .WithOpenApi();
+            group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int equipmentid, SchoolInventory db) =>
+            {
+                var affected = await db.Equipment
+                    .Where(model => model.EquipmentId == equipmentid)
+                    .ExecuteDeleteAsync();
+                return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
+            })
+            .WithName("DeleteEquipment")
+            .WithOpenApi();
+        }
     }
-}}
+}

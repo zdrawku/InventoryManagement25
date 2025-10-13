@@ -9,7 +9,7 @@ namespace InventoryManagement2025.Data
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.Equipments.Any())
+            if (context.Equipment.Any())
             {
                 return;   // DB has been seeded
             }
@@ -23,7 +23,7 @@ namespace InventoryManagement2025.Data
             };
             foreach (Equipment s in equipment)
             {
-                context.Equipments.Add(s);
+                context.Equipment.Add(s);
             }
             context.SaveChanges();
         }
