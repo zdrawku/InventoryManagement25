@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryManagement2025.Models
 {
@@ -8,6 +9,7 @@ namespace InventoryManagement2025.Models
     public class Equipment
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EquipmentId { get; set; }
 
         [Required]
@@ -21,10 +23,10 @@ namespace InventoryManagement2025.Models
         public string SerialNumber { get; set; } = string.Empty;
 
         [Required]
-        public Condition Condition { get; set; }
+        public string Condition { get; set; } = string.Empty;
 
         [Required]
-        public EquipmentStatus Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         [MaxLength(100)]
         public string Location { get; set; } = string.Empty;

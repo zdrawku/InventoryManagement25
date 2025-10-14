@@ -10,11 +10,17 @@ builder.Services.AddControllers()
     {
         // Serialize enums as strings in API responses
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        // Optional: Make enums case-insensitive for deserialization
-        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+
+
     });
 
+// Minimal APIs JSON options
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
+// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -23,7 +29,7 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-
+// Add Swagger and DbContext
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<SchoolInventory>(options =>
@@ -31,6 +37,7 @@ builder.Services.AddDbContext<SchoolInventory>(options =>
 
 var app = builder.Build();
 
+// Apply migrations and seed database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -43,18 +50,24 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while creating or seeding the database.");
+        logger.LogError(ex, "An error occurred while creating or seeding the DB.");
     }
 }
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("AllowAll");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHttpsRedirection();
+    // CORS active in production
+    //app.UseCors("AllowAll"); 
+}
 
-app.UseHttpsRedirection();
-app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
 

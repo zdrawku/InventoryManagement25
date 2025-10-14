@@ -68,11 +68,11 @@ namespace InventoryManagement2025.Controllers
             {
                 return Conflict("An equipment with this ID already exists.");
             }
-
+            equipment.EquipmentId = 0;
             _context.Equipment.Add(equipment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEquipment), new { id = equipment.EquipmentId }, equipment);
+            return CreatedAtAction(nameof(GetEquipment), new { id = 0 }, equipment);
         }
 
         // DELETE: api/Equipment/5
