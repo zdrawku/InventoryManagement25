@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using InventoryManagement2025.Models;
+using InventoryManagement2025.Data;
 
 #nullable disable
 

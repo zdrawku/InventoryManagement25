@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InventoryManagement2025.Models;
+using InventoryManagement2025.Data;
 
 namespace InventoryManagement2025.Controllers
 {
@@ -19,7 +20,7 @@ namespace InventoryManagement2025.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipments()
         {
-            return await _context.Equipment.ToListAsync();
+            return await _context.Equipment.AsNoTracking().ToListAsync();
         }
 
         // GET: api/Equipment/5
@@ -29,22 +30,17 @@ namespace InventoryManagement2025.Controllers
             var equipment = await _context.Equipment.FindAsync(id);
 
             if (equipment == null)
-            {
                 return NotFound();
-            }
 
             return equipment;
         }
 
         // PUT: api/Equipment/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEquipment(int id, Equipment equipment)
+        public async Task<IActionResult> PutEquipment(int id, [FromBody] Equipment equipment)
         {
             if (id != equipment.EquipmentId)
-            {
-                return BadRequest();
-            }
+                return BadRequest("Equipment ID mismatch.");
 
             _context.Entry(equipment).State = EntityState.Modified;
 
@@ -55,27 +51,28 @@ namespace InventoryManagement2025.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!EquipmentExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
         }
 
         // POST: api/Equipment
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
+        public async Task<ActionResult<Equipment>> PostEquipment([FromBody] Equipment equipment)
         {
+            // Prevent duplicates if ID manually provided
+            if (equipment.EquipmentId != 0 && EquipmentExists(equipment.EquipmentId))
+            {
+                return Conflict("An equipment with this ID already exists.");
+            }
+
             _context.Equipment.Add(equipment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEquipment", new { id = equipment.EquipmentId }, equipment);
+            return CreatedAtAction(nameof(GetEquipment), new { id = equipment.EquipmentId }, equipment);
         }
 
         // DELETE: api/Equipment/5
@@ -84,9 +81,7 @@ namespace InventoryManagement2025.Controllers
         {
             var equipment = await _context.Equipment.FindAsync(id);
             if (equipment == null)
-            {
                 return NotFound();
-            }
 
             _context.Equipment.Remove(equipment);
             await _context.SaveChangesAsync();

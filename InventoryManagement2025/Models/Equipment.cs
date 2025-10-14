@@ -1,118 +1,55 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.EntityFrameworkCore;
-using InventoryManagement2025.Models;
 
 namespace InventoryManagement2025.Models
 {
+    /// <summary>
+    /// Represents an equipment item in the inventory.
+    /// </summary>
     public class Equipment
     {
+        [Key]
         public int EquipmentId { get; set; }
 
         [Required]
+        [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
 
+        [MaxLength(50)]
         public string Type { get; set; } = string.Empty;
 
+        [MaxLength(100)]
         public string SerialNumber { get; set; } = string.Empty;
 
-        // 1️⃣ Equipment condition enumeration
+        [Required]
         public Condition Condition { get; set; }
 
-        // 2️⃣ Equipment status enumeration
+        [Required]
         public EquipmentStatus Status { get; set; }
 
-        // 3️⃣ Location as free text (e.g., "Room 204", "Library")
+        [MaxLength(100)]
         public string Location { get; set; } = string.Empty;
 
         public string PhotoUrl { get; set; } = string.Empty;
-
-        // Navigation property
-       // public ICollection<Request> Requests { get; set; }
     }
 
-    // --- ENUM DEFINITIONS BELOW ---
-
-    // Represents the physical condition of the equipment
+    /// <summary>
+    /// Represents the physical condition of the equipment.
+    /// </summary>
     public enum Condition
     {
         Excellent = 1,
         Good = 2,
         Fair = 3,
-        Damaged = 4,
+        Damaged = 4
     }
 
-    // Represents the availability or operational status
+    /// <summary>
+    /// Represents the operational or availability status of the equipment.
+    /// </summary>
     public enum EquipmentStatus
     {
         Available = 1,
         Unavailable = 2,
-        UnderRepair = 3,
-    }
-
-
-public static class EquipmentEndpoints
-{
-	public static void MapEquipmentEndpoints (this IEndpointRouteBuilder routes)
-    {
-        var group = routes.MapGroup("/api/Equipment").WithTags(nameof(Equipment));
-
-            group.MapGet("/", async (SchoolInventory db) =>
-            {
-                return await db.Equipment.ToListAsync();
-            })
-    .WithName("GetAllEquipment")
-    .WithOpenApi();
-
-            group.MapGet("/{id}", async Task<Results<Ok<Equipment>, NotFound>> (int equipmentid, SchoolInventory db) =>
-            {
-                return await db.Equipment.AsNoTracking()
-                    .FirstOrDefaultAsync(model => model.EquipmentId == equipmentid)
-                    is Equipment model
-                        ? TypedResults.Ok(model)
-                        : TypedResults.NotFound();
-            })
-            .WithName("GetEquipmentById")
-            .WithOpenApi();
-
-            group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int equipmentid, Equipment equipment, SchoolInventory db) =>
-            {
-                var affected = await db.Equipment
-                    .Where(model => model.EquipmentId == equipmentid)
-                    .ExecuteUpdateAsync(setters => setters
-                      .SetProperty(m => m.EquipmentId, equipment.EquipmentId)
-                      .SetProperty(m => m.Name, equipment.Name)
-                      .SetProperty(m => m.Type, equipment.Type)
-                      .SetProperty(m => m.SerialNumber, equipment.SerialNumber)
-                      .SetProperty(m => m.Condition, equipment.Condition)
-                      .SetProperty(m => m.Status, equipment.Status)
-                      .SetProperty(m => m.Location, equipment.Location)
-                      .SetProperty(m => m.PhotoUrl, equipment.PhotoUrl)
-                      );
-                return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
-            })
-            .WithName("UpdateEquipment")
-            .WithOpenApi();
-
-            group.MapPost("/", async (Equipment equipment, SchoolInventory db) =>
-            {
-                db.Equipment.Add(equipment);
-                await db.SaveChangesAsync();
-                return TypedResults.Created($"/api/Equipment/{equipment.EquipmentId}", equipment);
-            })
-            .WithName("CreateEquipment")
-            .WithOpenApi();
-
-            group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int equipmentid, SchoolInventory db) =>
-            {
-                var affected = await db.Equipment
-                    .Where(model => model.EquipmentId == equipmentid)
-                    .ExecuteDeleteAsync();
-                return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
-            })
-            .WithName("DeleteEquipment")
-            .WithOpenApi();
-        }
+        UnderRepair = 3
     }
 }
