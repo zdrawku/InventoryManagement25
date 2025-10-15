@@ -1,4 +1,32 @@
-﻿################################################################################
+﻿# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+**/bin/
+**/obj/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# SQLite local DB files
+*.db
+*.db-shm
+*.db-wal
+
+# Rider/JetBrains
+.idea/
+
+# VS Code workspace (optional)
+.vscode/
+
+# Logs
+*.log
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
