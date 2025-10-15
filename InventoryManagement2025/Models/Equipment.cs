@@ -23,15 +23,18 @@ namespace InventoryManagement2025.Models
         public string SerialNumber { get; set; } = string.Empty;
 
         [Required]
-        public string Condition { get; set; } = string.Empty;
+    public Condition Condition { get; set; } = Condition.Good;
 
         [Required]
-        public string Status { get; set; } = string.Empty;
+    public EquipmentStatus Status { get; set; } = EquipmentStatus.Available;
 
         [MaxLength(100)]
         public string Location { get; set; } = string.Empty;
 
         public string PhotoUrl { get; set; } = string.Empty;
+
+        // If true the item is considered sensitive and requires admin approval
+        public bool IsSensitive { get; set; } = false;
     }
 
     /// <summary>
@@ -51,7 +54,10 @@ namespace InventoryManagement2025.Models
     public enum EquipmentStatus
     {
         Available = 1,
-        Unavailable = 2,
-        UnderRepair = 3
+        CheckedOut = 2,
+        UnderRepair = 3,
+        Retired = 4,
+
+        Unavailable
     }
 }

@@ -6,7 +6,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- During development, avoid creating the native apphost executable which can be locked by a running process. -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <UseAppHost>false</UseAppHost>
+    <!-- Put Debug outputs in a simple folder without doubling net8.0 in the path -->
+    <OutputPath>bin\Debug\dev\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
@@ -21,6 +32,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 	<Content Include="school_inventory.db" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <!-- Exclude Tools helper project files from being compiled into the web project -->
+  <ItemGroup>
+    <Compile Remove="Tools\**\*.cs" />
+    <None Include="Tools\**\*" />
   </ItemGroup>
 
 </Project>
