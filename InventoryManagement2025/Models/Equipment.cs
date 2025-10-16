@@ -57,7 +57,6 @@ namespace InventoryManagement2025.Models
         CheckedOut = 2,
         UnderRepair = 3,
         Retired = 4,
-
-        Unavailable
+        Unavailable=5
     }
 }
