@@ -27,6 +27,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'YOUR_AZURE_WEBAPP_NAME'                     # ← replace
+          app-name: 'inventory-management-2025-gemini-team'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # ← add this secret (Azure publish profile XML)
           package: ./publish
