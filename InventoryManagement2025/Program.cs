@@ -54,18 +54,14 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors("AllowAll");
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
+
+app.UseCors("AllowAll");
+app.UseSwagger();
+app.UseSwaggerUI();
+
+if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
-    // CORS active in production
-    //app.UseCors("AllowAll"); 
 }
 
 app.UseAuthorization();
