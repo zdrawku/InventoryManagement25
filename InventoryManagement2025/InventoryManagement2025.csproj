@@ -20,6 +20,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+	<Content Include="school_inventory.db" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>
