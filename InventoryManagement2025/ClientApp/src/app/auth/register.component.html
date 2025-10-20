@@ -1,0 +1,54 @@
+<section class="auth-card">
+  <h1>Create an account</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid">
+      <label>
+        First name
+        <input type="text" formControlName="firstName" />
+      </label>
+      <label>
+        Last name
+        <input type="text" formControlName="lastName" />
+      </label>
+    </div>
+    <div class="error" *ngIf="form.controls.firstName.touched && form.controls.firstName.invalid">
+      First name is required.
+    </div>
+    <div class="error" *ngIf="form.controls.lastName.touched && form.controls.lastName.invalid">
+      Last name is required.
+    </div>
+
+    <label>
+      Email
+      <input type="email" formControlName="email" />
+    </label>
+    <div class="error" *ngIf="form.controls.email.touched && form.controls.email.invalid">
+      A valid email is required.
+    </div>
+
+    <label>
+      Password
+      <input type="password" formControlName="password" />
+    </label>
+    <div class="error" *ngIf="form.controls.password.touched && form.controls.password.invalid">
+      Password must be at least 6 characters.
+    </div>
+
+    <label>
+      Department (optional)
+      <input type="text" formControlName="department" />
+    </label>
+
+    <label>
+      Phone (optional)
+      <input type="tel" formControlName="phoneNumber" />
+    </label>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <button type="submit" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Creating account…' : 'Create account' }}
+    </button>
+  </form>
+</section>
