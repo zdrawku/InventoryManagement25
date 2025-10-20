@@ -16,11 +16,13 @@ namespace InventoryManagement2025.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public int EquipmentId { get; set; }
+    [Required]
+    public int EquipmentId { get; set; }
+    public Equipment? Equipment { get; set; }
 
-        [Required]
-        public string RequesterId { get; set; } = string.Empty;
+    [Required]
+    public string RequesterId { get; set; } = string.Empty;
+    public AppUser? Requester { get; set; }
 
     public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
 
@@ -30,7 +32,8 @@ namespace InventoryManagement2025.Models
 
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
 
-        public string? ApprovedById { get; set; }
+    public string? ApprovedById { get; set; }
+    public AppUser? ApprovedBy { get; set; }
 
         public DateTime? ApprovedAt { get; set; }
 

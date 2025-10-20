@@ -77,6 +77,19 @@ namespace InventoryManagement2025.Controllers
             return await _context.EquipmentRequests.ToListAsync();
         }
 
+        // GET: api/EquipmentRequests/user/{userId}
+        [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<EquipmentRequest>>> GetRequestsForUser(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("userId is required");
+            var list = await _context.EquipmentRequests
+                .Where(r => r.RequesterId == userId)
+                .OrderByDescending(r => r.RequestedAt)
+                .ToListAsync();
+            return list;
+        }
+
         // PATCH: api/EquipmentRequests/5/approve
         [HttpPatch("{id}/approve")]
         [Authorize(Roles = "Admin")]
