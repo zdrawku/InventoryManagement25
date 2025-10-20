@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryManagement2025.Models
@@ -17,27 +18,33 @@ namespace InventoryManagement2025.Models
         public string Name { get; set; } = string.Empty;
 
         [MaxLength(50)]
-        public string Type { get; set; } = string.Empty;
+        public string? Type { get; set; }
 
+        [Required]
         [MaxLength(100)]
         public string SerialNumber { get; set; } = string.Empty;
 
         [Required]
-        public string Condition { get; set; } = string.Empty;
+        public ConditionStatus Condition { get; set; } = ConditionStatus.Good;
 
         [Required]
-        public string Status { get; set; } = string.Empty;
+        public EquipmentStatus Status { get; set; } = EquipmentStatus.Available;
 
         [MaxLength(100)]
-        public string Location { get; set; } = string.Empty;
+        public string? Location { get; set; }
 
-        public string PhotoUrl { get; set; } = string.Empty;
+        [MaxLength(2048)]
+        public string? PhotoUrl { get; set; }
+
+        public ICollection<ConditionLog> ConditionLogs { get; set; } = new List<ConditionLog>();
+
+        public ICollection<Request> Requests { get; set; } = new List<Request>();
     }
 
     /// <summary>
     /// Represents the physical condition of the equipment.
     /// </summary>
-    public enum Condition
+    public enum ConditionStatus
     {
         Excellent = 1,
         Good = 2,
@@ -51,7 +58,8 @@ namespace InventoryManagement2025.Models
     public enum EquipmentStatus
     {
         Available = 1,
-        Unavailable = 2,
-        UnderRepair = 3
+        CheckedOut = 2,
+        Maintenance = 3,
+        Retired = 4
     }
 }
