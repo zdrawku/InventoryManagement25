@@ -163,13 +163,22 @@ using (var scope = app.Services.CreateScope())
         var existingAdmin = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
         if (existingAdmin == null)
         {
-            var adminUser = new AppUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+            var adminUser = new AppUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true, Name = "System Admin" };
             var createResult = userManager.CreateAsync(adminUser, adminPassword).GetAwaiter().GetResult();
             if (createResult.Succeeded)
             {
                 userManager.AddToRoleAsync(adminUser, adminRole).GetAwaiter().GetResult();
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogInformation($"Seeded admin user '{adminEmail}' with default password. Change the password immediately.");
+            }
+        }
+        else
+        {
+            // Ensure existing admin is in Admin role
+            var inRole = userManager.IsInRoleAsync(existingAdmin, adminRole).GetAwaiter().GetResult();
+            if (!inRole)
+            {
+                userManager.AddToRoleAsync(existingAdmin, adminRole).GetAwaiter().GetResult();
             }
         }
     }

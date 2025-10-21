@@ -6,6 +6,7 @@ using InventoryManagement2025.Data;
 namespace InventoryManagement2025.Controllers
 {
     [Route("api/[controller]")]
+    [Route("equipment")]
     [ApiController]
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class EquipmentController : ControllerBase
@@ -24,13 +25,26 @@ namespace InventoryManagement2025.Controllers
             return await _context.Equipment.AsNoTracking().ToListAsync();
         }
 
-        // GET: api/Equipment/search?name=...&type=...&status=Available
+        // GET: api/Equipment/search?qtext=canon&name=...&type=...&status=Available
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Equipment>>> Search([FromQuery] string? name, [FromQuery] string? type, [FromQuery] EquipmentStatus? status, [FromQuery] Condition? condition)
+        public async Task<ActionResult<IEnumerable<Equipment>>> Search(
+            [FromQuery] string? qtext,
+            [FromQuery] string? name,
+            [FromQuery] string? type,
+            [FromQuery] EquipmentStatus? status,
+            [FromQuery] Condition? condition)
         {
             var q = _context.Equipment.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(name)) q = q.Where(e => e.Name.Contains(name));
-            if (!string.IsNullOrWhiteSpace(type)) q = q.Where(e => e.Type.Contains(type));
+            if (!string.IsNullOrWhiteSpace(qtext))
+            {
+                var pattern = $"%{qtext}%";
+                q = q.Where(e => EF.Functions.Like(e.Name, pattern)
+                              || EF.Functions.Like(e.Type, pattern)
+                              || EF.Functions.Like(e.SerialNumber, pattern)
+                              || EF.Functions.Like(e.Location, pattern));
+            }
+            if (!string.IsNullOrWhiteSpace(name)) q = q.Where(e => EF.Functions.Like(e.Name, $"%{name}%"));
+            if (!string.IsNullOrWhiteSpace(type)) q = q.Where(e => EF.Functions.Like(e.Type, $"%{type}%"));
             if (status != null) q = q.Where(e => e.Status == status);
             if (condition != null) q = q.Where(e => e.Condition == condition);
 
@@ -102,7 +116,8 @@ namespace InventoryManagement2025.Controllers
                     throw;
             }
 
-            return NoContent();
+            // Return the updated entity for clarity instead of 204 No Content
+            return Ok(equipment);
         }
 
         // POST: api/Equipment
@@ -132,7 +147,19 @@ namespace InventoryManagement2025.Controllers
             _context.Equipment.Remove(equipment);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            // Return deleted id for client confirmation
+            return Ok(new { id });
+        }
+
+        // PUT: api/Equipment/{id}/status
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] EquipmentStatus status)
+        {
+            var equipment = await _context.Equipment.FindAsync(id);
+            if (equipment == null) return NotFound();
+            equipment.Status = status;
+            await _context.SaveChangesAsync();
+            return Ok(equipment);
         }
 
         private bool EquipmentExists(int id)

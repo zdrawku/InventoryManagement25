@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Text.Json.Serialization;
 
 namespace InventoryManagement2025.Models
 {
@@ -20,8 +22,10 @@ namespace InventoryManagement2025.Models
     public int EquipmentId { get; set; }
     public Equipment? Equipment { get; set; }
 
-    [Required]
+    // Set server-side from the authenticated user
+    [BindNever]
     public string RequesterId { get; set; } = string.Empty;
+    [JsonIgnore]
     public AppUser? Requester { get; set; }
 
     public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
@@ -33,6 +37,7 @@ namespace InventoryManagement2025.Models
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
 
     public string? ApprovedById { get; set; }
+    [JsonIgnore]
     public AppUser? ApprovedBy { get; set; }
 
         public DateTime? ApprovedAt { get; set; }
