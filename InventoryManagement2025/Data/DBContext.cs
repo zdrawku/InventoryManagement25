@@ -15,7 +15,7 @@ namespace InventoryManagement2025.Data
         public DbSet<Equipment> Equipment { get; set; }
         public DbSet<EquipmentRequest> EquipmentRequests { get; set; }
         public DbSet<ConditionLog> ConditionLogs { get; set; }
-        public DbSet<Document> Documents { get; set; }
+        public DbSet<InventoryDocument> Documents { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,7 +52,7 @@ namespace InventoryManagement2025.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Documents: uploaded by a user; visibility by role string
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<InventoryDocument>()
                 .HasOne(d => d.UploadedBy)
                 .WithMany()
                 .HasForeignKey(d => d.UploadedById)
@@ -76,7 +76,7 @@ namespace InventoryManagement2025.Data
                 .HasIndex(r => r.RequesterId);
             modelBuilder.Entity<EquipmentRequest>()
                 .HasIndex(r => r.ApprovedById);
-            modelBuilder.Entity<Document>()
+            modelBuilder.Entity<InventoryDocument>()
                 .HasIndex(d => d.VisibilityRole);
         }
     }

@@ -20,7 +20,7 @@ namespace InventoryManagement2025.Controllers
 
         // GET: /api/Documents or /documents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Document>>> GetDocuments()
+        public async Task<ActionResult<IEnumerable<InventoryDocument>>> GetDocuments()
         {
             var isAdmin = User.IsInRole("Admin");
             if (isAdmin)
@@ -35,7 +35,7 @@ namespace InventoryManagement2025.Controllers
 
         // GET: /api/Documents/{id} or /documents/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Document>> GetDocument(int id)
+        public async Task<ActionResult<InventoryDocument>> GetDocument(int id)
         {
             var doc = await _context.Documents.FindAsync(id);
             if (doc == null) return NotFound();
@@ -46,7 +46,7 @@ namespace InventoryManagement2025.Controllers
 
         // POST: /api/Documents or /documents
         [HttpPost]
-        public async Task<ActionResult<Document>> Create([FromBody] Document doc)
+        public async Task<ActionResult<InventoryDocument>> Create([FromBody] InventoryDocument doc)
         {
             var userId = User.FindFirst("id")?.Value;
             doc.Id = 0;
@@ -59,7 +59,7 @@ namespace InventoryManagement2025.Controllers
 
         // PUT: /api/Documents/{id} or /documents/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Document dto)
+        public async Task<IActionResult> Update(int id, [FromBody] InventoryDocument dto)
         {
             var doc = await _context.Documents.FindAsync(id);
             if (doc == null) return NotFound();

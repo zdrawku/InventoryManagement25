@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InventoryManagement2025.Models
 {
-    public class Document
+    public class InventoryDocument
     {
         [Key]
         public int Id { get; set; }
