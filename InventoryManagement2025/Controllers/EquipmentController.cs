@@ -96,8 +96,9 @@ namespace InventoryManagement2025.Controllers
         }
 
         // PUT: api/Equipment/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEquipment(int id, [FromBody] Equipment equipment)
+    [HttpPut("{id}")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+    public async Task<IActionResult> PutEquipment(int id, [FromBody] Equipment equipment)
         {
             if (id != equipment.EquipmentId)
                 return BadRequest("Equipment ID mismatch.");
@@ -121,8 +122,9 @@ namespace InventoryManagement2025.Controllers
         }
 
         // POST: api/Equipment
-        [HttpPost]
-        public async Task<ActionResult<Equipment>> PostEquipment([FromBody] Equipment equipment)
+    [HttpPost]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+    public async Task<ActionResult<Equipment>> PostEquipment([FromBody] Equipment equipment)
         {
             // Prevent duplicates if ID manually provided
             if (equipment.EquipmentId != 0 && EquipmentExists(equipment.EquipmentId))
@@ -137,8 +139,9 @@ namespace InventoryManagement2025.Controllers
         }
 
         // DELETE: api/Equipment/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEquipment(int id)
+    [HttpDelete("{id}")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteEquipment(int id)
         {
             var equipment = await _context.Equipment.FindAsync(id);
             if (equipment == null)
@@ -152,8 +155,9 @@ namespace InventoryManagement2025.Controllers
         }
 
         // PUT: api/Equipment/{id}/status
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(int id, [FromBody] EquipmentStatus status)
+    [HttpPut("{id}/status")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] EquipmentStatus status)
         {
             var equipment = await _context.Equipment.FindAsync(id);
             if (equipment == null) return NotFound();

@@ -259,7 +259,38 @@ app.MapGet("/api/auth/me", [Microsoft.AspNetCore.Authorization.Authorize] (Syste
     return Results.Ok(new { id, email, roles });
 });
 
+// Admin-only: assign a role to a user
+app.MapPost("/api/auth/roles/assign", async (
+    UserManager<AppUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    AssignRoleRequest request) =>
+{
+    if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Role))
+        return Results.BadRequest("Email and Role are required.");
+
+    var user = await userManager.FindByEmailAsync(request.Email);
+    if (user == null) return Results.NotFound("User not found.");
+
+    if (!await roleManager.RoleExistsAsync(request.Role))
+    {
+        await roleManager.CreateAsync(new IdentityRole(request.Role));
+    }
+
+    var already = await userManager.IsInRoleAsync(user, request.Role);
+    if (!already)
+    {
+        var addRes = await userManager.AddToRoleAsync(user, request.Role);
+        if (!addRes.Succeeded) return Results.BadRequest(addRes.Errors);
+    }
+
+    var rolesNow = await userManager.GetRolesAsync(user);
+    return Results.Ok(new { user.Id, user.Email, roles = rolesNow });
+})
+.RequireAuthorization(new Microsoft.AspNetCore.Authorization.AuthorizeAttribute { Roles = "Admin" });
+
 // Simple health check endpoint
 app.MapGet("/health", (IWebHostEnvironment env) => Results.Json(new { status = "ok", environment = env.EnvironmentName }));
 
 app.Run();
+
+public record AssignRoleRequest(string Email, string Role);

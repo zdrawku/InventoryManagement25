@@ -8,7 +8,7 @@ using System.Text;
 namespace InventoryManagement2025.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [Route("reports")]
     public class ReportsController : ControllerBase

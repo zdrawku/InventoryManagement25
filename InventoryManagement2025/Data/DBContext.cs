@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using InventoryManagement2025.Models;
-using Microsoft.CodeAnalysis;
 
 namespace InventoryManagement2025.Data
 {
