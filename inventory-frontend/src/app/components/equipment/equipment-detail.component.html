@@ -1,0 +1,66 @@
+<div class="detail-container">
+  @if (isLoading()) {
+    <div class="loading">Loading equipment details...</div>
+  } @else if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  } @else if (equipment()) {
+    <div class="detail-card">
+      <div class="detail-header">
+        <h1>{{ equipment()!.name }}</h1>
+        <div class="header-actions">
+          <a routerLink="/equipment" class="btn btn-secondary">Back to List</a>
+        </div>
+      </div>
+
+      <div class="detail-content">
+        @if (equipment()!.photoUrl) {
+          <div class="photo-section">
+            <img [src]="equipment()!.photoUrl" [alt]="equipment()!.name" />
+          </div>
+        }
+
+        <div class="info-section">
+          <div class="info-row">
+            <span class="label">Type:</span>
+            <span class="value">{{ equipment()!.type }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Serial Number:</span>
+            <span class="value">{{ equipment()!.serialNumber || 'N/A' }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Location:</span>
+            <span class="value">{{ equipment()!.location }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Status:</span>
+            <span class="badge" [class]="'status-' + equipment()!.status.toLowerCase()">
+              {{ equipment()!.status }}
+            </span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Condition:</span>
+            <span class="badge" [class]="'condition-' + equipment()!.condition.toLowerCase()">
+              {{ equipment()!.condition }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        @if (equipment()!.status === 'Available' && authService.isAuthenticated()) {
+          <button (click)="createRequest()" class="btn btn-success">Request This Equipment</button>
+        }
+        
+        @if (authService.isAdmin()) {
+          <button (click)="editEquipment()" class="btn btn-warning">Edit</button>
+          <button (click)="deleteEquipment()" class="btn btn-danger">Delete</button>
+        }
+      </div>
+    </div>
+  }
+</div>

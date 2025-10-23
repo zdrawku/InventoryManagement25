@@ -1,0 +1,95 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Welcome, {{ authService.currentUser()?.username }}!</h1>
+    <p class="role-badge">Role: {{ authService.currentUser()?.role }}</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">Loading dashboard...</div>
+  } @else {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ stats().totalEquipment }}</div>
+        <div class="stat-label">Total Equipment</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats().availableEquipment }}</div>
+        <div class="stat-label">Available</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats().myRequests }}</div>
+        <div class="stat-label">{{ authService.isAdmin() ? 'All Requests' : 'My Requests' }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats().pendingRequests }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+
+    <div class="dashboard-sections">
+      <div class="section">
+        <div class="section-header">
+          <h2>Recent Equipment</h2>
+          <a routerLink="/equipment" class="view-all">View All →</a>
+        </div>
+        <div class="equipment-list">
+          @for (item of recentEquipment(); track item.equipmentId) {
+            <div class="equipment-item">
+              <div class="equipment-info">
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.type }} - {{ item.location }}</p>
+              </div>
+              <span class="badge" [class]="'status-' + item.status.toLowerCase()">
+                {{ item.status }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2>Recent Requests</h2>
+          <a routerLink="/requests" class="view-all">View All →</a>
+        </div>
+        <div class="requests-list">
+          @for (request of recentRequests(); track request.id) {
+            <div class="request-item">
+              <div class="request-info">
+                <h3>{{ request.equipmentName || 'Equipment #' + request.equipmentId }}</h3>
+                <p>Requested: {{ formatDate(request.requestDate) }}</p>
+              </div>
+              <span class="badge" [class]="'status-' + request.status.toLowerCase()">
+                {{ request.status }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="actions-grid">
+        <a routerLink="/equipment" class="action-card">
+          <span class="action-icon">📦</span>
+          <span class="action-label">Browse Equipment</span>
+        </a>
+        <a routerLink="/requests/new" class="action-card">
+          <span class="action-icon">➕</span>
+          <span class="action-label">New Request</span>
+        </a>
+        @if (authService.isAdmin()) {
+          <a routerLink="/equipment/new" class="action-card">
+            <span class="action-icon">🔧</span>
+            <span class="action-label">Add Equipment</span>
+          </a>
+          <a routerLink="/reports" class="action-card">
+            <span class="action-icon">📊</span>
+            <span class="action-label">View Reports</span>
+          </a>
+        }
+      </div>
+    </div>
+  }
+</div>
