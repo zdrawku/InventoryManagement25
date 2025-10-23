@@ -1,0 +1,65 @@
+<div class="request-list-container">
+  <div class="header">
+    <h1>{{ authService.isAdmin() ? 'All Equipment Requests' : 'My Requests' }}</h1>
+    <a routerLink="/requests/new" class="btn btn-primary">New Request</a>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  }
+
+  @if (successMessage()) {
+    <div class="success-message">{{ successMessage() }}</div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading">Loading requests...</div>
+  } @else {
+    <div class="requests-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Equipment</th>
+            @if (authService.isAdmin()) {
+              <th>User</th>
+            }
+            <th>Request Date</th>
+            <th>Needed Until</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (request of requests(); track request.id) {
+            <tr>
+              <td>{{ request.equipmentName || 'Equipment #' + request.equipmentId }}</td>
+              @if (authService.isAdmin()) {
+                <td>{{ request.userName || 'User #' + request.userId }}</td>
+              }
+              <td>{{ formatDate(request.requestDate) }}</td>
+              <td>{{ formatDate(request.requestedUntil) }}</td>
+              <td>
+                <span class="badge" [class]="'status-' + request.status.toLowerCase()">
+                  {{ request.status }}
+                </span>
+              </td>
+              <td class="actions">
+                @if (authService.isAdmin() && request.status === 'Pending') {
+                  <button (click)="approveRequest(request.id)" class="btn btn-success btn-sm">Approve</button>
+                  <button (click)="rejectRequest(request.id)" class="btn btn-danger btn-sm">Reject</button>
+                }
+                @if (authService.isAdmin() && request.status === 'Approved') {
+                  <button (click)="returnEquipment(request.id)" class="btn btn-info btn-sm">Return</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="no-data">No requests found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

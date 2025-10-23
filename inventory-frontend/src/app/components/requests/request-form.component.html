@@ -1,0 +1,71 @@
+<div class="form-container">
+  <h2>New Equipment Request</h2>
+
+  @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  }
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="equipment">Equipment *</label>
+      <select
+        id="equipment"
+        [(ngModel)]="selectedEquipmentId"
+        name="equipment"
+        required
+      >
+        <option [value]="null">Select equipment...</option>
+        @for (item of equipment(); track item.equipmentId) {
+          <option [value]="item.equipmentId">
+            {{ item.name }} ({{ item.type }}) - {{ item.location }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="requestDate">Request Date *</label>
+      <input
+        type="date"
+        id="requestDate"
+        [(ngModel)]="requestDate"
+        name="requestDate"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="requestedUntil">Needed Until *</label>
+      <input
+        type="date"
+        id="requestedUntil"
+        [(ngModel)]="requestedUntil"
+        name="requestedUntil"
+        [min]="requestDate()"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notes (Optional)</label>
+      <textarea
+        id="notes"
+        [(ngModel)]="notes"
+        name="notes"
+        rows="4"
+        placeholder="Add any additional information about your request..."
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="isLoading()" class="btn btn-primary">
+        @if (isLoading()) {
+          <span>Submitting...</span>
+        } @else {
+          <span>Submit Request</span>
+        }
+      </button>
+      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+    </div>
+  </form>
+</div>

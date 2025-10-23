@@ -1,0 +1,100 @@
+<div class="reports-container">
+  <div class="header">
+    <h1>Reports & Analytics</h1>
+    <div class="export-buttons">
+      <button (click)="exportReport('csv')" class="btn btn-secondary">Export CSV</button>
+      <button (click)="exportReport('pdf')" class="btn btn-secondary">Export PDF</button>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  }
+
+  <div class="tabs">
+    <button
+      (click)="setActiveTab('usage')"
+      [class.active]="activeTab() === 'usage'"
+      class="tab-button"
+    >
+      Usage Report
+    </button>
+    <button
+      (click)="setActiveTab('history')"
+      [class.active]="activeTab() === 'history'"
+      class="tab-button"
+    >
+      History Logs
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">Loading report data...</div>
+  } @else {
+    @if (activeTab() === 'usage') {
+      <div class="report-section">
+        <h2>Equipment Usage Report</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Equipment</th>
+              <th>Total Requests</th>
+              <th>Total Days Used</th>
+              <th>Current Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (report of usageReports(); track report.equipmentId) {
+              <tr>
+                <td>{{ report.equipmentName }}</td>
+                <td>{{ report.totalRequests }}</td>
+                <td>{{ report.totalDays }}</td>
+                <td>
+                  <span class="badge" [class]="'status-' + report.currentStatus.toLowerCase()">
+                    {{ report.currentStatus }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="no-data">No usage data available</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (activeTab() === 'history') {
+      <div class="report-section">
+        <h2>Equipment History Logs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Equipment</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Timestamp</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of historyLogs(); track log.id) {
+              <tr>
+                <td>{{ log.equipmentName }}</td>
+                <td>{{ log.userName }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ formatDate(log.timestamp) }}</td>
+                <td>{{ log.notes || '-' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="no-data">No history logs available</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

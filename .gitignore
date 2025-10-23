@@ -6,3 +6,10 @@
 /.vs/InventoryManagement2025/CopilotIndices/17.14.1231.31060
 /.vs
 /InventoryManagement2025/bin/Debug/net8.0
+
+# Angular Frontend
+/inventory-frontend/node_modules
+/inventory-frontend/dist
+/inventory-frontend/.angular
+/inventory-frontend/.vscode
+

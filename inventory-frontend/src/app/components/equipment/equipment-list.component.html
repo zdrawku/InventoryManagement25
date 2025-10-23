@@ -1,0 +1,97 @@
+<div class="equipment-list-container">
+  <div class="header">
+    <h1>Equipment Catalog</h1>
+    @if (authService.isAdmin()) {
+      <a routerLink="/equipment/new" class="btn btn-primary">Add Equipment</a>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  }
+
+  <div class="filters">
+    <h3>Search & Filter</h3>
+    <div class="filter-row">
+      <input
+        type="text"
+        placeholder="Name"
+        [(ngModel)]="searchName"
+        (ngModelChange)="applyFilters()"
+      />
+      <input
+        type="text"
+        placeholder="Type"
+        [(ngModel)]="searchType"
+        (ngModelChange)="applyFilters()"
+      />
+      <select [(ngModel)]="searchStatus" (ngModelChange)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="Available">Available</option>
+        <option value="CheckedOut">Checked Out</option>
+        <option value="UnderRepair">Under Repair</option>
+        <option value="Retired">Retired</option>
+      </select>
+      <select [(ngModel)]="searchCondition" (ngModelChange)="applyFilters()">
+        <option value="">All Conditions</option>
+        <option value="Excellent">Excellent</option>
+        <option value="Good">Good</option>
+        <option value="Fair">Fair</option>
+        <option value="Damaged">Damaged</option>
+      </select>
+      <input
+        type="text"
+        placeholder="Location"
+        [(ngModel)]="searchLocation"
+        (ngModelChange)="applyFilters()"
+      />
+      <button (click)="clearFilters()" class="btn btn-secondary">Clear</button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">Loading equipment...</div>
+  } @else {
+    <div class="equipment-grid">
+      @for (item of filteredEquipment(); track item.equipmentId) {
+        <div class="equipment-card">
+          @if (item.photoUrl) {
+            <img [src]="item.photoUrl" [alt]="item.name" />
+          } @else {
+            <div class="no-image">No Image</div>
+          }
+          
+          <div class="equipment-details">
+            <h3>{{ item.name }}</h3>
+            <p><strong>Type:</strong> {{ item.type }}</p>
+            <p><strong>Serial:</strong> {{ item.serialNumber }}</p>
+            <p><strong>Location:</strong> {{ item.location }}</p>
+            <p>
+              <span class="badge" [class]="'status-' + item.status.toLowerCase()">
+                {{ item.status }}
+              </span>
+              <span class="badge" [class]="'condition-' + item.condition.toLowerCase()">
+                {{ item.condition }}
+              </span>
+            </p>
+          </div>
+
+          <div class="equipment-actions">
+            <button (click)="viewDetails(item.equipmentId)" class="btn btn-info">View</button>
+            
+            @if (item.status === 'Available' && authService.isAuthenticated()) {
+              <button (click)="createRequest(item.equipmentId)" class="btn btn-success">Request</button>
+            }
+            
+            @if (authService.isAdmin()) {
+              <button (click)="editEquipment(item.equipmentId)" class="btn btn-warning">Edit</button>
+              <button (click)="deleteEquipment(item.equipmentId, item.name)" class="btn btn-danger">Delete</button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="no-results">No equipment found matching your filters.</div>
+      }
+    </div>
+  }
+</div>
