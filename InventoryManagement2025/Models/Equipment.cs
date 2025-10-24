@@ -23,10 +23,10 @@ namespace InventoryManagement2025.Models
         public string SerialNumber { get; set; } = string.Empty;
 
         [Required]
-    public Condition Condition { get; set; } = Condition.Good;
+        public Condition Condition { get; set; } = Condition.Good;
 
         [Required]
-    public EquipmentStatus Status { get; set; } = EquipmentStatus.Available;
+        public EquipmentStatus Status { get; set; } = EquipmentStatus.Available;
 
         [MaxLength(100)]
         public string Location { get; set; } = string.Empty;
