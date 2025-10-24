@@ -18,7 +18,12 @@ namespace InventoryManagement2025.Controllers
             _context = context;
         }
 
-        // GET: /api/Documents or /documents
+        /// <summary>
+        /// Retrieves all documents based on user role permissions.
+        /// </summary>
+        /// <returns>A list of documents. Admins see all documents, users see only documents visible to their role.</returns>
+        /// <response code="200">Returns the list of documents</response>
+        /// <response code="401">If the user is not authenticated</response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventoryDocument>>> GetDocuments()
         {
@@ -33,7 +38,15 @@ namespace InventoryManagement2025.Controllers
                 .ToListAsync();
         }
 
-        // GET: /api/Documents/{id} or /documents/{id}
+        /// <summary>
+        /// Retrieves a specific document by its ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the document.</param>
+        /// <returns>The document with the specified ID.</returns>
+        /// <response code="200">Returns the requested document</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user doesn't have permission to view this document</response>
+        /// <response code="404">If the document with the specified ID is not found</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<InventoryDocument>> GetDocument(int id)
         {
@@ -44,7 +57,14 @@ namespace InventoryManagement2025.Controllers
             return doc;
         }
 
-        // POST: /api/Documents or /documents
+        /// <summary>
+        /// Creates a new document in the system.
+        /// </summary>
+        /// <param name="doc">The document object to create. The ID, UploadedById, and UploadedAt fields will be automatically set.</param>
+        /// <returns>The created document with assigned ID and metadata.</returns>
+        /// <response code="201">Returns the newly created document</response>
+        /// <response code="400">If the document data is invalid</response>
+        /// <response code="401">If the user is not authenticated</response>
         [HttpPost]
         public async Task<ActionResult<InventoryDocument>> Create([FromBody] InventoryDocument doc)
         {
@@ -57,7 +77,17 @@ namespace InventoryManagement2025.Controllers
             return CreatedAtAction(nameof(GetDocument), new { id = doc.Id }, doc);
         }
 
-        // PUT: /api/Documents/{id} or /documents/{id}
+        /// <summary>
+        /// Updates an existing document. Only the document owner or admin can perform this operation.
+        /// </summary>
+        /// <param name="id">The unique identifier of the document to update.</param>
+        /// <param name="dto">The updated document data containing Title, Path, and VisibilityRole.</param>
+        /// <returns>The updated document.</returns>
+        /// <response code="200">Returns the updated document</response>
+        /// <response code="400">If the update data is invalid</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user doesn't have permission to update this document</response>
+        /// <response code="404">If the document with the specified ID is not found</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] InventoryDocument dto)
         {
@@ -76,7 +106,15 @@ namespace InventoryManagement2025.Controllers
             return Ok(doc);
         }
 
-        // DELETE: /api/Documents/{id} or /documents/{id}
+        /// <summary>
+        /// Deletes a document from the system. Only the document owner or admin can perform this operation.
+        /// </summary>
+        /// <param name="id">The unique identifier of the document to delete.</param>
+        /// <returns>A confirmation object containing the deleted document ID.</returns>
+        /// <response code="200">Returns confirmation of successful deletion with the document ID</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user doesn't have permission to delete this document</response>
+        /// <response code="404">If the document with the specified ID is not found</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
