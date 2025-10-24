@@ -207,6 +207,98 @@ namespace InventoryManagement2025.Controllers
             
             return Ok(new { user.Id, user.Email, roles = rolesNow });
         }
+
+        /// <summary>
+        /// Retrieves all users in the system with their roles. Admin access required.
+        /// </summary>
+        /// <returns>A list of all users with their ID, email, and assigned roles.</returns>
+        /// <response code="200">Returns the list of all users with role information</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user is not an admin</response>
+        [HttpGet("users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = _userManager.Users.ToList();
+            var userList = new List<object>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userList.Add(new
+                {
+                    user.Id,
+                    user.Email,
+                    user.UserName,
+                    user.Name,
+                    roles = roles.ToArray()
+                });
+            }
+
+            return Ok(userList);
+        }
+
+        /// <summary>
+        /// Updates a user's role, replacing all existing roles with the specified role. Admin access required.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user whose role should be updated.</param>
+        /// <param name="request">The role update details including the new role.</param>
+        /// <returns>The updated user information with the new role assignment.</returns>
+        /// <response code="200">Returns the user with updated role assignment</response>
+        /// <response code="400">If the request data is invalid or role update fails</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user is not an admin</response>
+        /// <response code="404">If the specified user is not found</response>
+        [HttpPut("users/{userId}/role")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUserRole(string userId, [FromBody] UpdateUserRoleRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(request.Role))
+            {
+                return BadRequest("User ID and Role are required.");
+            }
+
+            // Validate that the role is either Admin or User
+            if (request.Role != "Admin" && request.Role != "User")
+            {
+                return BadRequest("Role must be either 'Admin' or 'User'.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Ensure the role exists
+            if (!await _roleManager.RoleExistsAsync(request.Role))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(request.Role));
+            }
+
+            // Get current roles and remove all of them
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            if (currentRoles.Any())
+            {
+                var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeResult.Succeeded)
+                {
+                    return BadRequest(removeResult.Errors);
+                }
+            }
+
+            // Add the new role
+            var addResult = await _userManager.AddToRoleAsync(user, request.Role);
+            if (!addResult.Succeeded)
+            {
+                return BadRequest(addResult.Errors);
+            }
+
+            var updatedRoles = await _userManager.GetRolesAsync(user);
+            _logger.LogInformation($"User {user.Email} role updated to {request.Role} by {User.FindFirst(ClaimTypes.Email)?.Value}");
+            
+            return Ok(new { user.Id, user.Email, user.UserName, user.Name, roles = updatedRoles });
+        }
     }
 
     /// <summary>
@@ -221,6 +313,17 @@ namespace InventoryManagement2025.Controllers
         
         /// <summary>
         /// The name of the role to assign to the user.
+        /// </summary>
+        public string Role { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Request model for updating a user's role.
+    /// </summary>
+    public class UpdateUserRoleRequest
+    {
+        /// <summary>
+        /// The role to assign to the user (Admin or User).
         /// </summary>
         public string Role { get; set; } = string.Empty;
     }
