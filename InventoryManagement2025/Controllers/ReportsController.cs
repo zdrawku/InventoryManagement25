@@ -19,7 +19,13 @@ namespace InventoryManagement2025.Controllers
             _context = context;
         }
 
-        // GET: /reports/usage
+        /// <summary>
+        /// Generates equipment usage statistics including total equipment count and status breakdown.
+        /// </summary>
+        /// <returns>Usage statistics with counts for total equipment, available, checked out, pending requests, and approved requests.</returns>
+        /// <response code="200">Returns the usage statistics report</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user is not an admin</response>
         [HttpGet("usage")]
         public async Task<IActionResult> Usage()
         {
@@ -31,7 +37,13 @@ namespace InventoryManagement2025.Controllers
             return Ok(new { total, available, checkedOut, pending, approved });
         }
 
-        // GET: /reports/history
+        /// <summary>
+        /// Retrieves recent activity history showing equipment-related actions and events.
+        /// </summary>
+        /// <returns>The 50 most recent activity log entries ordered by timestamp (most recent first).</returns>
+        /// <response code="200">Returns the activity history report</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user is not an admin</response>
         [HttpGet("history")]
         public async Task<IActionResult> History()
         {
@@ -42,7 +54,13 @@ namespace InventoryManagement2025.Controllers
             return Ok(recentLogs);
         }
 
-        // GET: /reports/export
+        /// <summary>
+        /// Exports all equipment data to a CSV file for reporting and backup purposes.
+        /// </summary>
+        /// <returns>A CSV file containing comprehensive equipment data including all fields and status information.</returns>
+        /// <response code="200">Returns the CSV file with complete equipment data</response>
+        /// <response code="401">If the user is not authenticated</response>
+        /// <response code="403">If the user is not an admin</response>
         [HttpGet("export")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Export()
