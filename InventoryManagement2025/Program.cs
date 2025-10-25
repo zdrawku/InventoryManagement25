@@ -194,17 +194,17 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
+app.UseCors("AllowAll");
+
+// Enable Swagger in all environments for API documentation
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// Only redirect to HTTPS in development (Azure handles SSL termination)
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("AllowAll");
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
+    // HTTPS redirection handled by Azure in production
     app.UseHttpsRedirection();
-    // CORS active in production
-    //app.UseCors("AllowAll"); 
 }
 
 app.UseAuthentication();
