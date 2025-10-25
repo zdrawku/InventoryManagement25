@@ -3,6 +3,7 @@ using System;
 using InventoryManagement2025.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,44 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryManagement2025.Migrations
 {
     [DbContext(typeof(SchoolInventory))]
-    partial class SchoolInventoryModelSnapshot : ModelSnapshot
+    [Migration("20251015163350_AddRequestFieldsAndLogs")]
+    partial class AddRequestFieldsAndLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
-
-            modelBuilder.Entity("InventoryManagement2025.Models.ActivityLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("EquipmentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EquipmentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ActivityLogs");
-                });
 
             modelBuilder.Entity("InventoryManagement2025.Models.AppUser", b =>
                 {
@@ -72,9 +43,6 @@ namespace InventoryManagement2025.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -145,51 +113,15 @@ namespace InventoryManagement2025.Migrations
                     b.ToTable("ConditionLogs");
                 });
 
-            modelBuilder.Entity("InventoryManagement2025.Models.Document", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UploadedById")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("VisibilityRole")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UploadedById");
-
-                    b.HasIndex("VisibilityRole");
-
-                    b.ToTable("Documents");
-                });
-
             modelBuilder.Entity("InventoryManagement2025.Models.Equipment", b =>
                 {
                     b.Property<int>("EquipmentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Condition")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsSensitive")
                         .HasColumnType("INTEGER");
@@ -213,8 +145,9 @@ namespace InventoryManagement2025.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -268,12 +201,6 @@ namespace InventoryManagement2025.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApprovedById");
-
-                    b.HasIndex("EquipmentId");
-
-                    b.HasIndex("RequesterId");
 
                     b.ToTable("EquipmentRequests");
                 });
@@ -406,60 +333,6 @@ namespace InventoryManagement2025.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("InventoryManagement2025.Models.ActivityLog", b =>
-                {
-                    b.HasOne("InventoryManagement2025.Models.Equipment", "Equipment")
-                        .WithMany()
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("InventoryManagement2025.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Equipment");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("InventoryManagement2025.Models.Document", b =>
-                {
-                    b.HasOne("InventoryManagement2025.Models.AppUser", "UploadedBy")
-                        .WithMany()
-                        .HasForeignKey("UploadedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("UploadedBy");
-                });
-
-            modelBuilder.Entity("InventoryManagement2025.Models.EquipmentRequest", b =>
-                {
-                    b.HasOne("InventoryManagement2025.Models.AppUser", "ApprovedBy")
-                        .WithMany("ApprovedRequests")
-                        .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("InventoryManagement2025.Models.Equipment", "Equipment")
-                        .WithMany()
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InventoryManagement2025.Models.AppUser", "Requester")
-                        .WithMany("Requests")
-                        .HasForeignKey("RequesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ApprovedBy");
-
-                    b.Navigation("Equipment");
-
-                    b.Navigation("Requester");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -509,13 +382,6 @@ namespace InventoryManagement2025.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("InventoryManagement2025.Models.AppUser", b =>
-                {
-                    b.Navigation("ApprovedRequests");
-
-                    b.Navigation("Requests");
                 });
 #pragma warning restore 612, 618
         }

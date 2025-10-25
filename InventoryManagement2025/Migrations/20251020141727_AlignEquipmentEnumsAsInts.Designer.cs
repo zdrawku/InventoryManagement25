@@ -3,6 +3,7 @@ using System;
 using InventoryManagement2025.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,44 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryManagement2025.Migrations
 {
     [DbContext(typeof(SchoolInventory))]
-    partial class SchoolInventoryModelSnapshot : ModelSnapshot
+    [Migration("20251020141727_AlignEquipmentEnumsAsInts")]
+    partial class AlignEquipmentEnumsAsInts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
-
-            modelBuilder.Entity("InventoryManagement2025.Models.ActivityLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("EquipmentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EquipmentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ActivityLogs");
-                });
 
             modelBuilder.Entity("InventoryManagement2025.Models.AppUser", b =>
                 {
@@ -72,9 +43,6 @@ namespace InventoryManagement2025.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -143,43 +111,6 @@ namespace InventoryManagement2025.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ConditionLogs");
-                });
-
-            modelBuilder.Entity("InventoryManagement2025.Models.Document", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UploadedById")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("VisibilityRole")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UploadedById");
-
-                    b.HasIndex("VisibilityRole");
-
-                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("InventoryManagement2025.Models.Equipment", b =>
@@ -404,34 +335,6 @@ namespace InventoryManagement2025.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("InventoryManagement2025.Models.ActivityLog", b =>
-                {
-                    b.HasOne("InventoryManagement2025.Models.Equipment", "Equipment")
-                        .WithMany()
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("InventoryManagement2025.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Equipment");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("InventoryManagement2025.Models.Document", b =>
-                {
-                    b.HasOne("InventoryManagement2025.Models.AppUser", "UploadedBy")
-                        .WithMany()
-                        .HasForeignKey("UploadedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("UploadedBy");
                 });
 
             modelBuilder.Entity("InventoryManagement2025.Models.EquipmentRequest", b =>

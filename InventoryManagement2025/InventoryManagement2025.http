@@ -1,6 +1,6 @@
 @InventoryManagement2025_HostAddress = http://localhost:5220
 
-GET {{InventoryManagement2025_HostAddress}}/weatherforecast/
+GET {{InventoryManagement2025_HostAddress}}/
 Accept: application/json
 
 ###
