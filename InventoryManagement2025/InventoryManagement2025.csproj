@@ -9,12 +9,8 @@
   </PropertyGroup>
 
   <!-- During development, avoid creating the native apphost executable which can be locked by a running process. -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' AND '$(WEBSITE_INSTANCE_ID)' == '' ">
     <UseAppHost>false</UseAppHost>
-    <!-- Put Debug outputs in a simple folder without doubling net8.0 in the path -->
-    <OutputPath>bin\Debug\dev\</OutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
