@@ -8,6 +8,13 @@ namespace InventoryManagement2025.Data
         {
             // Ensure database is created through migrations in Program.cs (context.Database.Migrate())
 
+            // Force refresh of equipment data - remove this check to always reseed
+            // Uncomment the next 3 lines to force fresh data on every deployment
+            /*
+            context.Equipment.RemoveRange(context.Equipment);
+            context.SaveChanges();
+            */
+
             if (context.Equipment.Any())
             {
                 return;   // DB has been seeded
@@ -35,6 +42,19 @@ namespace InventoryManagement2025.Data
 
             context.Equipment.AddRange(equipment);
             context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Force refresh of equipment data - use this to update data in production
+        /// </summary>
+        public static void ForceRefreshEquipment(SchoolInventory context)
+        {
+            // Remove all existing equipment
+            context.Equipment.RemoveRange(context.Equipment);
+            context.SaveChanges();
+
+            // Re-add the updated equipment data
+            Initialize(context);
         }
     }
 }
