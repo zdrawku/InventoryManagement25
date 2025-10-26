@@ -145,7 +145,19 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<SchoolInventory>();
         Console.WriteLine($"📁 Database file location: {context.Database.GetDbConnection().DataSource}");
         context.Database.Migrate();
-        DbInit.Initialize(context);
+        
+        // Check if we should force refresh equipment data
+        var forceRefresh = builder.Configuration["ForceEquipmentRefresh"];
+        if (!string.IsNullOrEmpty(forceRefresh) && forceRefresh.ToLower() == "true")
+        {
+            Console.WriteLine("🔄 Force refreshing equipment data...");
+            DbInit.ForceRefreshEquipment(context);
+        }
+        else
+        {
+            DbInit.Initialize(context);
+        }
+        
         // Seed roles and an initial admin user
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<AppUser>>();
