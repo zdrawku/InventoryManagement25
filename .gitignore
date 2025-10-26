@@ -14,9 +14,9 @@
 Thumbs.db
 
 # SQLite local DB files
-*.db
-*.db-shm
-*.db-wal
+#*.db
+#*.db-shm
+#*.db-wal
 
 # Rider/JetBrains
 .idea/
